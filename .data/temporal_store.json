@@ -1,0 +1,929 @@
+{
+  "tapes": {
+    "test_user_a_1788376558611:tape_1788376558612_af391ee0": {
+      "tapeId": "tape_1788376558612_af391ee0",
+      "ownerUid": "test_user_a_1788376558611",
+      "title": "User A Confidential Vault Tape",
+      "sealedProse": "Top secret personal prose that should only unlock when creativity is high",
+      "recipientNote": "Unlocks when creativity >= 7 for 3 days",
+      "status": "sealed",
+      "condition": {
+        "metric": "creativityIndex",
+        "operator": "gte",
+        "threshold": 7,
+        "sustainedDays": 3,
+        "minObservations": 3,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788376558612,
+      "createdAt": 1788376558612,
+      "updatedAt": 1710086400000,
+      "unlockedAt": null,
+      "unlockEvidence": null,
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710086400000,
+        "satisfactionPercentage": 33,
+        "lastReason": "Threshold condition violated: observation at 2026-09-02T19:15:59.720Z has creativityIndex = 5, which violates gte 7."
+      },
+      "policyVersion": 1
+    },
+    "user_unlock_1788376559721:tape_1788376559721_116a8eba": {
+      "tapeId": "tape_1788376559721_116a8eba",
+      "ownerUid": "user_unlock_1788376559721",
+      "title": "Peaceful Horizon Tape",
+      "sealedProse": "CONGRATULATIONS: You have successfully maintained low stress levels!",
+      "recipientNote": "Opens when stress <= 4 across 2 days",
+      "status": "sealed",
+      "condition": {
+        "metric": "stressIndex",
+        "operator": "lte",
+        "threshold": 4,
+        "sustainedDays": 2,
+        "minObservations": 2,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788376559721,
+      "createdAt": 1788376559721,
+      "updatedAt": 1788376559721,
+      "unlockedAt": null,
+      "unlockEvidence": null,
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 0,
+        "lastEvaluatedAt": null,
+        "satisfactionPercentage": 0,
+        "lastReason": "Sealed. Awaiting baseline telemetry evaluations."
+      },
+      "policyVersion": 1
+    },
+    "user_idempotent_1788376559967:tape_1788376559967_4b88fdd1": {
+      "tapeId": "tape_1788376559967_4b88fdd1",
+      "ownerUid": "user_idempotent_1788376559967",
+      "title": "Idempotency Test Tape",
+      "sealedProse": "Idempotency secret prose",
+      "recipientNote": "",
+      "status": "unlocked",
+      "condition": {
+        "metric": "focusIndex",
+        "operator": "gte",
+        "threshold": 5,
+        "sustainedDays": 0,
+        "minObservations": 1,
+        "minConfidence": 0.7
+      },
+      "sealedAt": 1788376559967,
+      "createdAt": 1788376559967,
+      "updatedAt": 1788376559968,
+      "unlockedAt": 1788376559968,
+      "unlockEvidence": {
+        "unlockedAt": 1788376559968,
+        "evaluatedAt": 1788376559968,
+        "currentStreakDays": 0,
+        "observationCount": 1,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "threshold": 5,
+        "metric": "focusIndex",
+        "operator": "gte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 1,
+        "lastEvaluatedAt": 1788376559968,
+        "satisfactionPercentage": 100,
+        "lastReason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9."
+      },
+      "policyVersion": 1
+    },
+    "test_user_a_1788376595354:tape_1788376595354_a3970dde": {
+      "tapeId": "tape_1788376595354_a3970dde",
+      "ownerUid": "test_user_a_1788376595354",
+      "title": "User A Confidential Vault Tape",
+      "sealedProse": "Top secret personal prose that should only unlock when creativity is high",
+      "recipientNote": "Unlocks when creativity >= 7 for 3 days",
+      "status": "sealed",
+      "condition": {
+        "metric": "creativityIndex",
+        "operator": "gte",
+        "threshold": 7,
+        "sustainedDays": 3,
+        "minObservations": 3,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788376595354,
+      "createdAt": 1788376595354,
+      "updatedAt": 1710086400000,
+      "unlockedAt": null,
+      "unlockEvidence": null,
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710086400000,
+        "satisfactionPercentage": 33,
+        "lastReason": "Threshold condition violated: observation at 2026-09-02T19:16:36.611Z has creativityIndex = 5, which violates gte 7."
+      },
+      "policyVersion": 1
+    },
+    "user_unlock_1788376596612:tape_1788376596612_f1f1fad7": {
+      "tapeId": "tape_1788376596612_f1f1fad7",
+      "ownerUid": "user_unlock_1788376596612",
+      "title": "Peaceful Horizon Tape",
+      "sealedProse": "CONGRATULATIONS: You have successfully maintained low stress levels!",
+      "recipientNote": "Opens when stress <= 4 across 2 days",
+      "status": "unlocked",
+      "condition": {
+        "metric": "stressIndex",
+        "operator": "lte",
+        "threshold": 4,
+        "sustainedDays": 2,
+        "minObservations": 2,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788376596612,
+      "createdAt": 1788376596612,
+      "updatedAt": 1710172800000,
+      "unlockedAt": 1710172800000,
+      "unlockEvidence": {
+        "unlockedAt": 1710172800000,
+        "evaluatedAt": 1710172800000,
+        "currentStreakDays": 2,
+        "observationCount": 2,
+        "confidence": 0.935,
+        "reason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935.",
+        "threshold": 4,
+        "metric": "stressIndex",
+        "operator": "lte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 2,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710172800000,
+        "satisfactionPercentage": 100,
+        "lastReason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935."
+      },
+      "policyVersion": 1
+    },
+    "user_idempotent_1788376596614:tape_1788376596614_b0b54300": {
+      "tapeId": "tape_1788376596614_b0b54300",
+      "ownerUid": "user_idempotent_1788376596614",
+      "title": "Idempotency Test Tape",
+      "sealedProse": "Idempotency secret prose",
+      "recipientNote": "",
+      "status": "unlocked",
+      "condition": {
+        "metric": "focusIndex",
+        "operator": "gte",
+        "threshold": 5,
+        "sustainedDays": 0,
+        "minObservations": 1,
+        "minConfidence": 0.7
+      },
+      "sealedAt": 1788376596614,
+      "createdAt": 1788376596614,
+      "updatedAt": 1788376596615,
+      "unlockedAt": 1788376596615,
+      "unlockEvidence": {
+        "unlockedAt": 1788376596615,
+        "evaluatedAt": 1788376596615,
+        "currentStreakDays": 0,
+        "observationCount": 1,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "threshold": 5,
+        "metric": "focusIndex",
+        "operator": "gte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 1,
+        "lastEvaluatedAt": 1788376596615,
+        "satisfactionPercentage": 100,
+        "lastReason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9."
+      },
+      "policyVersion": 1
+    },
+    "test_user_a_1788407624084:tape_1788407624084_7b11394d": {
+      "tapeId": "tape_1788407624084_7b11394d",
+      "ownerUid": "test_user_a_1788407624084",
+      "title": "User A Confidential Vault Tape",
+      "sealedProse": "Top secret personal prose that should only unlock when creativity is high",
+      "recipientNote": "Unlocks when creativity >= 7 for 3 days",
+      "status": "sealed",
+      "condition": {
+        "metric": "creativityIndex",
+        "operator": "gte",
+        "threshold": 7,
+        "sustainedDays": 3,
+        "minObservations": 3,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788407624084,
+      "createdAt": 1788407624084,
+      "updatedAt": 1710086400000,
+      "unlockedAt": null,
+      "unlockEvidence": null,
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710086400000,
+        "satisfactionPercentage": 33,
+        "lastReason": "Threshold condition violated: observation at 2026-09-03T03:53:45.243Z has creativityIndex = 5, which violates gte 7."
+      },
+      "policyVersion": 1
+    },
+    "user_unlock_1788407625244:tape_1788407625244_3c789a2e": {
+      "tapeId": "tape_1788407625244_3c789a2e",
+      "ownerUid": "user_unlock_1788407625244",
+      "title": "Peaceful Horizon Tape",
+      "sealedProse": "CONGRATULATIONS: You have successfully maintained low stress levels!",
+      "recipientNote": "Opens when stress <= 4 across 2 days",
+      "status": "unlocked",
+      "condition": {
+        "metric": "stressIndex",
+        "operator": "lte",
+        "threshold": 4,
+        "sustainedDays": 2,
+        "minObservations": 2,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788407625244,
+      "createdAt": 1788407625244,
+      "updatedAt": 1710172800000,
+      "unlockedAt": 1710172800000,
+      "unlockEvidence": {
+        "unlockedAt": 1710172800000,
+        "evaluatedAt": 1710172800000,
+        "currentStreakDays": 2,
+        "observationCount": 2,
+        "confidence": 0.935,
+        "reason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935.",
+        "threshold": 4,
+        "metric": "stressIndex",
+        "operator": "lte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 2,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710172800000,
+        "satisfactionPercentage": 100,
+        "lastReason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935."
+      },
+      "policyVersion": 1
+    },
+    "user_idempotent_1788407625246:tape_1788407625246_14ebb279": {
+      "tapeId": "tape_1788407625246_14ebb279",
+      "ownerUid": "user_idempotent_1788407625246",
+      "title": "Idempotency Test Tape",
+      "sealedProse": "Idempotency secret prose",
+      "recipientNote": "",
+      "status": "unlocked",
+      "condition": {
+        "metric": "focusIndex",
+        "operator": "gte",
+        "threshold": 5,
+        "sustainedDays": 0,
+        "minObservations": 1,
+        "minConfidence": 0.7
+      },
+      "sealedAt": 1788407625246,
+      "createdAt": 1788407625246,
+      "updatedAt": 1788407625246,
+      "unlockedAt": 1788407625246,
+      "unlockEvidence": {
+        "unlockedAt": 1788407625246,
+        "evaluatedAt": 1788407625246,
+        "currentStreakDays": 0,
+        "observationCount": 1,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "threshold": 5,
+        "metric": "focusIndex",
+        "operator": "gte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 1,
+        "lastEvaluatedAt": 1788407625246,
+        "satisfactionPercentage": 100,
+        "lastReason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9."
+      },
+      "policyVersion": 1
+    },
+    "test_user_a_1788407641401:tape_1788407641401_ccbb45fa": {
+      "tapeId": "tape_1788407641401_ccbb45fa",
+      "ownerUid": "test_user_a_1788407641401",
+      "title": "User A Confidential Vault Tape",
+      "sealedProse": "Top secret personal prose that should only unlock when creativity is high",
+      "recipientNote": "Unlocks when creativity >= 7 for 3 days",
+      "status": "sealed",
+      "condition": {
+        "metric": "creativityIndex",
+        "operator": "gte",
+        "threshold": 7,
+        "sustainedDays": 3,
+        "minObservations": 3,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788407641401,
+      "createdAt": 1788407641401,
+      "updatedAt": 1710086400000,
+      "unlockedAt": null,
+      "unlockEvidence": null,
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710086400000,
+        "satisfactionPercentage": 33,
+        "lastReason": "Threshold condition violated: observation at 2026-09-03T03:54:02.810Z has creativityIndex = 5, which violates gte 7."
+      },
+      "policyVersion": 1
+    },
+    "user_unlock_1788407642811:tape_1788407642811_2971ee6d": {
+      "tapeId": "tape_1788407642811_2971ee6d",
+      "ownerUid": "user_unlock_1788407642811",
+      "title": "Peaceful Horizon Tape",
+      "sealedProse": "CONGRATULATIONS: You have successfully maintained low stress levels!",
+      "recipientNote": "Opens when stress <= 4 across 2 days",
+      "status": "unlocked",
+      "condition": {
+        "metric": "stressIndex",
+        "operator": "lte",
+        "threshold": 4,
+        "sustainedDays": 2,
+        "minObservations": 2,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788407642811,
+      "createdAt": 1788407642811,
+      "updatedAt": 1710172800000,
+      "unlockedAt": 1710172800000,
+      "unlockEvidence": {
+        "unlockedAt": 1710172800000,
+        "evaluatedAt": 1710172800000,
+        "currentStreakDays": 2,
+        "observationCount": 2,
+        "confidence": 0.935,
+        "reason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935.",
+        "threshold": 4,
+        "metric": "stressIndex",
+        "operator": "lte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 2,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710172800000,
+        "satisfactionPercentage": 100,
+        "lastReason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935."
+      },
+      "policyVersion": 1
+    },
+    "user_idempotent_1788407642813:tape_1788407642813_039a74c8": {
+      "tapeId": "tape_1788407642813_039a74c8",
+      "ownerUid": "user_idempotent_1788407642813",
+      "title": "Idempotency Test Tape",
+      "sealedProse": "Idempotency secret prose",
+      "recipientNote": "",
+      "status": "unlocked",
+      "condition": {
+        "metric": "focusIndex",
+        "operator": "gte",
+        "threshold": 5,
+        "sustainedDays": 0,
+        "minObservations": 1,
+        "minConfidence": 0.7
+      },
+      "sealedAt": 1788407642813,
+      "createdAt": 1788407642813,
+      "updatedAt": 1788407642813,
+      "unlockedAt": 1788407642813,
+      "unlockEvidence": {
+        "unlockedAt": 1788407642813,
+        "evaluatedAt": 1788407642813,
+        "currentStreakDays": 0,
+        "observationCount": 1,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "threshold": 5,
+        "metric": "focusIndex",
+        "operator": "gte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 1,
+        "lastEvaluatedAt": 1788407642813,
+        "satisfactionPercentage": 100,
+        "lastReason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9."
+      },
+      "policyVersion": 1
+    }
+  },
+  "telemetry": {
+    "test_user_a_1788376558611": [
+      {
+        "telemetryId": "ledger_1788376559716_e01beb00",
+        "entryId": "entry_1",
+        "ownerUid": "test_user_a_1788376558611",
+        "recordedAt": 1788376559716,
+        "stressIndex": 3,
+        "focusIndex": 7,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1788376559720_4bcd11fd",
+        "entryId": "entry_2",
+        "ownerUid": "test_user_a_1788376558611",
+        "recordedAt": 1788376559720,
+        "stressIndex": 4,
+        "focusIndex": 6,
+        "creativityIndex": 5,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_unlock_1788376559721": [
+      {
+        "telemetryId": "ledger_1788376559721_99a8b828",
+        "entryId": "entry_day0",
+        "ownerUid": "user_unlock_1788376559721",
+        "recordedAt": 1788376559721,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.92,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_idempotent_1788376559967": [
+      {
+        "telemetryId": "ledger_1788376559967_e1a4ca89",
+        "entryId": "entry_f1",
+        "ownerUid": "user_idempotent_1788376559967",
+        "recordedAt": 1788376559967,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "test_user_a_1788376595354": [
+      {
+        "telemetryId": "ledger_1788376596610_f862ff04",
+        "entryId": "entry_1",
+        "ownerUid": "test_user_a_1788376595354",
+        "recordedAt": 1788376596610,
+        "stressIndex": 3,
+        "focusIndex": 7,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1788376596611_d92b5c1a",
+        "entryId": "entry_2",
+        "ownerUid": "test_user_a_1788376595354",
+        "recordedAt": 1788376596611,
+        "stressIndex": 4,
+        "focusIndex": 6,
+        "creativityIndex": 5,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_unlock_1788376596612": [
+      {
+        "telemetryId": "ledger_1710000000000_e4af9da1",
+        "entryId": "entry_day0",
+        "ownerUid": "user_unlock_1788376596612",
+        "recordedAt": 1710000000000,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.92,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1710172800000_f3102c83",
+        "entryId": "entry_day2",
+        "ownerUid": "user_unlock_1788376596612",
+        "recordedAt": 1710172800000,
+        "stressIndex": 2,
+        "focusIndex": 9,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.95,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_idempotent_1788376596614": [
+      {
+        "telemetryId": "ledger_1788376596614_8253a661",
+        "entryId": "entry_f1",
+        "ownerUid": "user_idempotent_1788376596614",
+        "recordedAt": 1788376596614,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "test_user_a_1788407624084": [
+      {
+        "telemetryId": "ledger_1788407625241_c1b947c1",
+        "entryId": "entry_1",
+        "ownerUid": "test_user_a_1788407624084",
+        "recordedAt": 1788407625241,
+        "stressIndex": 3,
+        "focusIndex": 7,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1788407625243_49d10a25",
+        "entryId": "entry_2",
+        "ownerUid": "test_user_a_1788407624084",
+        "recordedAt": 1788407625243,
+        "stressIndex": 4,
+        "focusIndex": 6,
+        "creativityIndex": 5,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_unlock_1788407625244": [
+      {
+        "telemetryId": "ledger_1710000000000_bd5e7e6b",
+        "entryId": "entry_day0",
+        "ownerUid": "user_unlock_1788407625244",
+        "recordedAt": 1710000000000,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.92,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1710172800000_13e72c0f",
+        "entryId": "entry_day2",
+        "ownerUid": "user_unlock_1788407625244",
+        "recordedAt": 1710172800000,
+        "stressIndex": 2,
+        "focusIndex": 9,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.95,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_idempotent_1788407625246": [
+      {
+        "telemetryId": "ledger_1788407625246_5d83b24f",
+        "entryId": "entry_f1",
+        "ownerUid": "user_idempotent_1788407625246",
+        "recordedAt": 1788407625246,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "test_user_a_1788407641401": [
+      {
+        "telemetryId": "ledger_1788407642808_16eee6f8",
+        "entryId": "entry_1",
+        "ownerUid": "test_user_a_1788407641401",
+        "recordedAt": 1788407642808,
+        "stressIndex": 3,
+        "focusIndex": 7,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1788407642810_2267694f",
+        "entryId": "entry_2",
+        "ownerUid": "test_user_a_1788407641401",
+        "recordedAt": 1788407642810,
+        "stressIndex": 4,
+        "focusIndex": 6,
+        "creativityIndex": 5,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_unlock_1788407642811": [
+      {
+        "telemetryId": "ledger_1710000000000_b6eae8e6",
+        "entryId": "entry_day0",
+        "ownerUid": "user_unlock_1788407642811",
+        "recordedAt": 1710000000000,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.92,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1710172800000_815e69cc",
+        "entryId": "entry_day2",
+        "ownerUid": "user_unlock_1788407642811",
+        "recordedAt": 1710172800000,
+        "stressIndex": 2,
+        "focusIndex": 9,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.95,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_idempotent_1788407642813": [
+      {
+        "telemetryId": "ledger_1788407642813_69c4fcc0",
+        "entryId": "entry_f1",
+        "ownerUid": "user_idempotent_1788407642813",
+        "recordedAt": 1788407642813,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ]
+  },
+  "evaluations": {
+    "test_user_a_1788376558611:tape_1788376558612_af391ee0": [
+      {
+        "evaluationId": "eval_1710000000000_70ceb3c6",
+        "tapeId": "tape_1788376558612_af391ee0",
+        "evaluatedAt": 1710000000000,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Observation count (1) is below required minimum (3).",
+        "evaluatorVersion": "1.0.0-deterministic"
+      },
+      {
+        "evaluationId": "eval_1710086400000_9eeb9e9b",
+        "tapeId": "tape_1788376558612_af391ee0",
+        "evaluatedAt": 1710086400000,
+        "satisfied": false,
+        "observationsExamined": 2,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Threshold condition violated: observation at 2026-09-02T19:15:59.720Z has creativityIndex = 5, which violates gte 7.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_idempotent_1788376559967:tape_1788376559967_4b88fdd1": [
+      {
+        "evaluationId": "eval_1788376559968_bc46c32f",
+        "tapeId": "tape_1788376559967_4b88fdd1",
+        "evaluatedAt": 1788376559968,
+        "satisfied": true,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "test_user_a_1788376595354:tape_1788376595354_a3970dde": [
+      {
+        "evaluationId": "eval_1710000000000_20b5961f",
+        "tapeId": "tape_1788376595354_a3970dde",
+        "evaluatedAt": 1710000000000,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Observation count (1) is below required minimum (3).",
+        "evaluatorVersion": "1.0.0-deterministic"
+      },
+      {
+        "evaluationId": "eval_1710086400000_4e839944",
+        "tapeId": "tape_1788376595354_a3970dde",
+        "evaluatedAt": 1710086400000,
+        "satisfied": false,
+        "observationsExamined": 2,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Threshold condition violated: observation at 2026-09-02T19:16:36.611Z has creativityIndex = 5, which violates gte 7.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_unlock_1788376596612:tape_1788376596612_f1f1fad7": [
+      {
+        "evaluationId": "eval_1710172800000_d6fc6b18",
+        "tapeId": "tape_1788376596612_f1f1fad7",
+        "evaluatedAt": 1710172800000,
+        "satisfied": true,
+        "observationsExamined": 2,
+        "currentStreakDays": 2,
+        "confidence": 0.935,
+        "reason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_idempotent_1788376596614:tape_1788376596614_b0b54300": [
+      {
+        "evaluationId": "eval_1788376596615_b335f41c",
+        "tapeId": "tape_1788376596614_b0b54300",
+        "evaluatedAt": 1788376596615,
+        "satisfied": true,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "test_user_a_1788407624084:tape_1788407624084_7b11394d": [
+      {
+        "evaluationId": "eval_1710000000000_7b01d902",
+        "tapeId": "tape_1788407624084_7b11394d",
+        "evaluatedAt": 1710000000000,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Observation count (1) is below required minimum (3).",
+        "evaluatorVersion": "1.0.0-deterministic"
+      },
+      {
+        "evaluationId": "eval_1710086400000_d84433ff",
+        "tapeId": "tape_1788407624084_7b11394d",
+        "evaluatedAt": 1710086400000,
+        "satisfied": false,
+        "observationsExamined": 2,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Threshold condition violated: observation at 2026-09-03T03:53:45.243Z has creativityIndex = 5, which violates gte 7.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_unlock_1788407625244:tape_1788407625244_3c789a2e": [
+      {
+        "evaluationId": "eval_1710172800000_d7d67fb4",
+        "tapeId": "tape_1788407625244_3c789a2e",
+        "evaluatedAt": 1710172800000,
+        "satisfied": true,
+        "observationsExamined": 2,
+        "currentStreakDays": 2,
+        "confidence": 0.935,
+        "reason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_idempotent_1788407625246:tape_1788407625246_14ebb279": [
+      {
+        "evaluationId": "eval_1788407625246_03a9d28a",
+        "tapeId": "tape_1788407625246_14ebb279",
+        "evaluatedAt": 1788407625246,
+        "satisfied": true,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "test_user_a_1788407641401:tape_1788407641401_ccbb45fa": [
+      {
+        "evaluationId": "eval_1710000000000_7b80e142",
+        "tapeId": "tape_1788407641401_ccbb45fa",
+        "evaluatedAt": 1710000000000,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Observation count (1) is below required minimum (3).",
+        "evaluatorVersion": "1.0.0-deterministic"
+      },
+      {
+        "evaluationId": "eval_1710086400000_0c6ecd34",
+        "tapeId": "tape_1788407641401_ccbb45fa",
+        "evaluatedAt": 1710086400000,
+        "satisfied": false,
+        "observationsExamined": 2,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Threshold condition violated: observation at 2026-09-03T03:54:02.810Z has creativityIndex = 5, which violates gte 7.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_unlock_1788407642811:tape_1788407642811_2971ee6d": [
+      {
+        "evaluationId": "eval_1710172800000_b3ecb4f4",
+        "tapeId": "tape_1788407642811_2971ee6d",
+        "evaluatedAt": 1710172800000,
+        "satisfied": true,
+        "observationsExamined": 2,
+        "currentStreakDays": 2,
+        "confidence": 0.935,
+        "reason": "All unlock conditions met: stressIndex lte 4 maintained over 2 days across 2 observations with confidence 0.935.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_idempotent_1788407642813:tape_1788407642813_039a74c8": [
+      {
+        "evaluationId": "eval_1788407642813_0303f1bd",
+        "tapeId": "tape_1788407642813_039a74c8",
+        "evaluatedAt": 1788407642813,
+        "satisfied": true,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "All unlock conditions met: focusIndex gte 5 maintained over 0 days across 1 observations with confidence 0.9.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ]
+  }
+}

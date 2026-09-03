@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      match /interactions/{interactionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /entries/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /telemetry/{telemetryId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Authoritative Telemetry Ledger:
+      // Client can read their own observations.
+      // Direct client creation must match strict bounded schema and own UID.
+      // Historical observations are immutable.
+      match /telemetry_ledger/{telemetryId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null 
+          && request.auth.uid == userId 
+          && request.resource.data.ownerUid == userId
+          && request.resource.data.stressIndex >= 1 && request.resource.data.stressIndex <= 10
+          && request.resource.data.focusIndex >= 1 && request.resource.data.focusIndex <= 10
+          && request.resource.data.creativityIndex >= 1 && request.resource.data.creativityIndex <= 10;
+        allow update, delete: if false;
+      }
+
+      // Temporal Tapes:
+      // Client can read their own tapes.
+      // Client can create a sealed tape, but cannot set status = 'unlocked', cannot set unlockedAt or unlockEvidence.
+      // Client cannot transition a tape directly from sealed to unlocked.
+      // Client cannot alter ownerUid, unlockedAt, or unlockEvidence.
+      match /tapes/{tapeId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null 
+          && request.auth.uid == userId 
+          && request.resource.data.ownerUid == userId
+          && request.resource.data.status == 'sealed'
+          && request.resource.data.unlockedAt == null
+          && request.resource.data.unlockEvidence == null;
+        allow update: if request.auth != null 
+          && request.auth.uid == userId 
+          && request.resource.data.ownerUid == resource.data.ownerUid
+          && !('unlockedAt' in request.resource.data && request.resource.data.unlockedAt != resource.data.unlockedAt)
+          && !('unlockEvidence' in request.resource.data && request.resource.data.unlockEvidence != resource.data.unlockEvidence)
+          && !(resource.data.status == 'sealed' && request.resource.data.status == 'unlocked');
+        allow delete: if request.auth != null && request.auth.uid == userId;
+
+        // Evaluation History subcollection:
+        // Readable by the tape owner, only server Admin SDK writes logs
+        match /evaluations/{evaluationId} {
+          allow read: if request.auth != null && request.auth.uid == userId;
+          allow write: if false;
+        }
+      }
+    }
+  }
+}
