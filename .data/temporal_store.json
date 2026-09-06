@@ -5569,6 +5569,278 @@
         "outcome": "unlocked"
       },
       "policyVersion": 1
+    },
+    "test_user_a_1788711582663:tape_1788711582664_f9aeffad": {
+      "tapeId": "tape_1788711582664_f9aeffad",
+      "ownerUid": "test_user_a_1788711582663",
+      "title": "User A Confidential Vault Tape",
+      "sealedProse": "Top secret personal prose that should only unlock when creativity is high",
+      "recipientNote": "Unlocks when creativity >= 7 for 3 days",
+      "status": "sealed",
+      "condition": {
+        "metric": "creativityIndex",
+        "operator": "gte",
+        "threshold": 7,
+        "sustainedDays": 3,
+        "minObservations": 3,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788711582664,
+      "createdAt": 1788711582664,
+      "updatedAt": 1710086400000,
+      "unlockedAt": null,
+      "unlockEvidence": null,
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710086400000,
+        "satisfactionPercentage": 33,
+        "lastReason": "Your tape is still sealed. Your current creativity score is 5/10, while this tape requires at least 7/10. Progress: 0 of 3 qualifying days and 1 of 3 required observations.",
+        "observationsRecorded": 1,
+        "observationsRequired": 3,
+        "daysElapsed": 0,
+        "daysRequired": 3,
+        "currentMetricAverage": 8,
+        "currentScore": 5,
+        "requiredScore": 7,
+        "conditionThreshold": 7,
+        "outcome": "sealed_threshold_not_met"
+      },
+      "policyVersion": 1
+    },
+    "user_focus_check_1788711584049:tape_1788711584049_6d4ebd49": {
+      "tapeId": "tape_1788711584049_6d4ebd49",
+      "ownerUid": "user_focus_check_1788711584049",
+      "title": "Focus Mastery Tape",
+      "sealedProse": "High focus attained",
+      "recipientNote": "",
+      "status": "sealed",
+      "condition": {
+        "metric": "focusIndex",
+        "operator": "gte",
+        "threshold": 7,
+        "sustainedDays": 5,
+        "minObservations": 4,
+        "minConfidence": 0.7
+      },
+      "sealedAt": 1788711584049,
+      "createdAt": 1788711584049,
+      "updatedAt": 1788711584055,
+      "unlockedAt": null,
+      "unlockEvidence": null,
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 1,
+        "lastEvaluatedAt": 1788711584055,
+        "satisfactionPercentage": 12,
+        "lastReason": "Your tape is still sealed. Your current focus score is 5/10, while this tape requires at least 7/10. Progress: 0 of 5 qualifying days and 0 of 4 required observations.",
+        "observationsRecorded": 0,
+        "observationsRequired": 4,
+        "daysElapsed": 0,
+        "daysRequired": 5,
+        "currentMetricAverage": 5,
+        "currentScore": 5,
+        "requiredScore": 7,
+        "conditionThreshold": 7,
+        "outcome": "sealed_threshold_not_met"
+      },
+      "policyVersion": 1
+    },
+    "user_unlock_1788711584058:tape_1788711584058_dd97d42c": {
+      "tapeId": "tape_1788711584058_dd97d42c",
+      "ownerUid": "user_unlock_1788711584058",
+      "title": "Peaceful Horizon Tape",
+      "sealedProse": "CONGRATULATIONS: You have successfully maintained low stress levels!",
+      "recipientNote": "Opens when stress <= 4 across 2 days",
+      "status": "unlocked",
+      "condition": {
+        "metric": "stressIndex",
+        "operator": "lte",
+        "threshold": 4,
+        "sustainedDays": 2,
+        "minObservations": 2,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788711584058,
+      "createdAt": 1788711584058,
+      "updatedAt": 1710172800000,
+      "unlockedAt": 1710172800000,
+      "unlockEvidence": {
+        "unlockedAt": 1710172800000,
+        "evaluatedAt": 1710172800000,
+        "currentStreakDays": 2,
+        "observationCount": 2,
+        "confidence": 0.935,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "threshold": 4,
+        "metric": "stressIndex",
+        "operator": "lte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 2,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1710172800000,
+        "satisfactionPercentage": 100,
+        "lastReason": "Condition satisfied. This tape is now unlocked.",
+        "observationsRecorded": 2,
+        "observationsRequired": 2,
+        "daysElapsed": 2,
+        "daysRequired": 2,
+        "currentMetricAverage": 2.5,
+        "currentScore": 2,
+        "requiredScore": 4,
+        "conditionThreshold": 4,
+        "outcome": "unlocked"
+      },
+      "policyVersion": 1
+    },
+    "user_idempotent_1788711584070:tape_1788711584070_abb3db80": {
+      "tapeId": "tape_1788711584070_abb3db80",
+      "ownerUid": "user_idempotent_1788711584070",
+      "title": "Idempotency Test Tape",
+      "sealedProse": "Idempotency secret prose",
+      "recipientNote": "",
+      "status": "unlocked",
+      "condition": {
+        "metric": "focusIndex",
+        "operator": "gte",
+        "threshold": 5,
+        "sustainedDays": 0,
+        "minObservations": 1,
+        "minConfidence": 0.7
+      },
+      "sealedAt": 1788711584070,
+      "createdAt": 1788711584070,
+      "updatedAt": 1788711584076,
+      "unlockedAt": 1788711584076,
+      "unlockEvidence": {
+        "unlockedAt": 1788711584076,
+        "evaluatedAt": 1788711584076,
+        "currentStreakDays": 0,
+        "observationCount": 1,
+        "confidence": 0.9,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "threshold": 5,
+        "metric": "focusIndex",
+        "operator": "gte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 0,
+        "currentObservationCount": 1,
+        "lastEvaluatedAt": 1788711584076,
+        "satisfactionPercentage": 100,
+        "lastReason": "Condition satisfied. This tape is now unlocked.",
+        "observationsRecorded": 1,
+        "observationsRequired": 1,
+        "daysElapsed": 0,
+        "daysRequired": 0,
+        "currentMetricAverage": 8,
+        "currentScore": 8,
+        "requiredScore": 5,
+        "conditionThreshold": 5,
+        "outcome": "unlocked"
+      },
+      "policyVersion": 1
+    },
+    "user_slice_1788711584079:tape_1788711584082_e2f5dc26": {
+      "tapeId": "tape_1788711584082_e2f5dc26",
+      "ownerUid": "user_slice_1788711584079",
+      "title": "Letter to my calm future self",
+      "sealedProse": "You have found steady calm and sustained resilience. Never forget how you reached this point.",
+      "recipientNote": "Unlocks when stress <= 4 across at least 1 sustained day with 2 entries.",
+      "status": "unlocked",
+      "condition": {
+        "metric": "stressIndex",
+        "operator": "lte",
+        "threshold": 4,
+        "sustainedDays": 1,
+        "minObservations": 2,
+        "minConfidence": 0.8
+      },
+      "sealedAt": 1788711584082,
+      "createdAt": 1788711584082,
+      "updatedAt": 1715129600000,
+      "unlockedAt": 1715129600000,
+      "unlockEvidence": {
+        "unlockedAt": 1715129600000,
+        "evaluatedAt": 1715129600000,
+        "currentStreakDays": 1.5,
+        "observationCount": 2,
+        "confidence": 0.935,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "threshold": 4,
+        "metric": "stressIndex",
+        "operator": "lte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 1.5,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1715129600000,
+        "satisfactionPercentage": 100,
+        "lastReason": "Condition satisfied. This tape is now unlocked.",
+        "observationsRecorded": 2,
+        "observationsRequired": 2,
+        "daysElapsed": 1.5,
+        "daysRequired": 1,
+        "currentMetricAverage": 2.5,
+        "currentScore": 2,
+        "requiredScore": 4,
+        "conditionThreshold": 4,
+        "outcome": "unlocked"
+      },
+      "policyVersion": 1
+    },
+    "user_autoeval_1788711584095:tape_1788711584095_28a7138c": {
+      "tapeId": "tape_1788711584095_28a7138c",
+      "ownerUid": "user_autoeval_1788711584095",
+      "title": "Automatic evaluation test tape",
+      "sealedProse": "This secret should unlock automatically once telemetry criteria are met.",
+      "recipientNote": "",
+      "status": "unlocked",
+      "condition": {
+        "metric": "focusIndex",
+        "operator": "gte",
+        "threshold": 7,
+        "sustainedDays": 1,
+        "minObservations": 2,
+        "minConfidence": 0.75
+      },
+      "sealedAt": 1788711584095,
+      "createdAt": 1788711584095,
+      "updatedAt": 1715103680000,
+      "unlockedAt": 1715103680000,
+      "unlockEvidence": {
+        "unlockedAt": 1715103680000,
+        "evaluatedAt": 1715103680000,
+        "currentStreakDays": 1.2,
+        "observationCount": 2,
+        "confidence": 0.91,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "threshold": 7,
+        "metric": "focusIndex",
+        "operator": "gte",
+        "satisfied": true
+      },
+      "evaluationProgress": {
+        "currentStreakDays": 1.2,
+        "currentObservationCount": 2,
+        "lastEvaluatedAt": 1715103680000,
+        "satisfactionPercentage": 100,
+        "lastReason": "Condition satisfied. This tape is now unlocked.",
+        "observationsRecorded": 2,
+        "observationsRequired": 2,
+        "daysElapsed": 1.2,
+        "daysRequired": 1,
+        "currentMetricAverage": 8.5,
+        "currentScore": 9,
+        "requiredScore": 7,
+        "conditionThreshold": 7,
+        "outcome": "unlocked"
+      },
+      "policyVersion": 1
     }
   },
   "telemetry": {
@@ -9444,6 +9716,178 @@
         "isDeterministicFallback": false,
         "schemaVersion": 1
       }
+    ],
+    "test_user_a_1788711582663": [
+      {
+        "telemetryId": "ledger_1788711584036_16b7523f",
+        "entryId": "entry_1",
+        "ownerUid": "test_user_a_1788711582663",
+        "recordedAt": 1788711584036,
+        "stressIndex": 3,
+        "focusIndex": 7,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1788711584043_d0c4b926",
+        "entryId": "entry_2",
+        "ownerUid": "test_user_a_1788711582663",
+        "recordedAt": 1788711584043,
+        "stressIndex": 4,
+        "focusIndex": 6,
+        "creativityIndex": 5,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_focus_check_1788711584049": [
+      {
+        "telemetryId": "ledger_1788711584052_1c855a2e",
+        "entryId": "entry_focus_5",
+        "ownerUid": "user_focus_check_1788711584049",
+        "recordedAt": 1788711584052,
+        "stressIndex": 3,
+        "focusIndex": 5,
+        "creativityIndex": 6,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_unlock_1788711584058": [
+      {
+        "telemetryId": "ledger_1710000000000_66332959",
+        "entryId": "entry_day0",
+        "ownerUid": "user_unlock_1788711584058",
+        "recordedAt": 1710000000000,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.92,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1710172800000_81734d68",
+        "entryId": "entry_day2",
+        "ownerUid": "user_unlock_1788711584058",
+        "recordedAt": 1710172800000,
+        "stressIndex": 2,
+        "focusIndex": 9,
+        "creativityIndex": 8,
+        "dominantThemes": [],
+        "confidenceScore": 0.95,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_idempotent_1788711584070": [
+      {
+        "telemetryId": "ledger_1788711584073_c0ef630c",
+        "entryId": "entry_f1",
+        "ownerUid": "user_idempotent_1788711584070",
+        "recordedAt": 1788711584073,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_slice_1788711584079": [
+      {
+        "telemetryId": "ledger_1715000000000_94cbf86f",
+        "entryId": "entry_day1_mindful",
+        "ownerUid": "user_slice_1788711584079",
+        "recordedAt": 1715000000000,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 7,
+        "dominantThemes": [
+          "calm",
+          "clarity"
+        ],
+        "confidenceScore": 0.92,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1715129600000_e15fbad7",
+        "entryId": "entry_day2_peaceful",
+        "ownerUid": "user_slice_1788711584079",
+        "recordedAt": 1715129600000,
+        "stressIndex": 2,
+        "focusIndex": 9,
+        "creativityIndex": 8,
+        "dominantThemes": [
+          "peace",
+          "focus"
+        ],
+        "confidenceScore": 0.95,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
+    ],
+    "user_autoeval_1788711584095": [
+      {
+        "telemetryId": "ledger_1715000000000_73ddac4b",
+        "entryId": "entry_auto_1",
+        "ownerUid": "user_autoeval_1788711584095",
+        "recordedAt": 1715000000000,
+        "stressIndex": 3,
+        "focusIndex": 8,
+        "creativityIndex": 6,
+        "dominantThemes": [
+          "focus"
+        ],
+        "confidenceScore": 0.9,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      },
+      {
+        "telemetryId": "ledger_1715103680000_d91b759e",
+        "entryId": "entry_auto_2",
+        "ownerUid": "user_autoeval_1788711584095",
+        "recordedAt": 1715103680000,
+        "stressIndex": 3,
+        "focusIndex": 9,
+        "creativityIndex": 7,
+        "dominantThemes": [
+          "deep work"
+        ],
+        "confidenceScore": 0.92,
+        "evidenceQuotes": [],
+        "modelUsed": "gemini-3.6-flash",
+        "isDeterministicFallback": false,
+        "schemaVersion": 1
+      }
     ]
   },
   "evaluations": {
@@ -12008,6 +12452,117 @@
       {
         "evaluationId": "eval_1715103680000_9446f76e",
         "tapeId": "tape_1788708177992_5e73c873",
+        "evaluatedAt": 1715103680000,
+        "satisfied": true,
+        "observationsExamined": 2,
+        "currentStreakDays": 1.2,
+        "confidence": 0.91,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "test_user_a_1788711582663:tape_1788711582664_f9aeffad": [
+      {
+        "evaluationId": "eval_1710000000000_88d97416",
+        "tapeId": "tape_1788711582664_f9aeffad",
+        "evaluatedAt": 1710000000000,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Your tape is still sealed. Progress: 1 of 3 required observations and 0 of 3 qualifying days.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      },
+      {
+        "evaluationId": "eval_1710086400000_fdd663d6",
+        "tapeId": "tape_1788711582664_f9aeffad",
+        "evaluatedAt": 1710086400000,
+        "satisfied": false,
+        "observationsExamined": 2,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Your tape is still sealed. Your current creativity score is 5/10, while this tape requires at least 7/10. Progress: 0 of 3 qualifying days and 1 of 3 required observations.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_focus_check_1788711584049:tape_1788711584049_6d4ebd49": [
+      {
+        "evaluationId": "eval_1788711584055_1d4532bc",
+        "tapeId": "tape_1788711584049_6d4ebd49",
+        "evaluatedAt": 1788711584055,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Your tape is still sealed. Your current focus score is 5/10, while this tape requires at least 7/10. Progress: 0 of 5 qualifying days and 0 of 4 required observations.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_unlock_1788711584058:tape_1788711584058_dd97d42c": [
+      {
+        "evaluationId": "eval_1710172800000_f044819f",
+        "tapeId": "tape_1788711584058_dd97d42c",
+        "evaluatedAt": 1710172800000,
+        "satisfied": true,
+        "observationsExamined": 2,
+        "currentStreakDays": 2,
+        "confidence": 0.935,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_idempotent_1788711584070:tape_1788711584070_abb3db80": [
+      {
+        "evaluationId": "eval_1788711584076_ee45438f",
+        "tapeId": "tape_1788711584070_abb3db80",
+        "evaluatedAt": 1788711584076,
+        "satisfied": true,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_slice_1788711584079:tape_1788711584082_e2f5dc26": [
+      {
+        "evaluationId": "eval_1715003600000_4169e7a8",
+        "tapeId": "tape_1788711584082_e2f5dc26",
+        "evaluatedAt": 1715003600000,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.92,
+        "reason": "Your tape is still sealed. Progress: 1 of 2 required observations and 0 of 1 qualifying days.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      },
+      {
+        "evaluationId": "eval_1715129600000_559f4783",
+        "tapeId": "tape_1788711584082_e2f5dc26",
+        "evaluatedAt": 1715129600000,
+        "satisfied": true,
+        "observationsExamined": 2,
+        "currentStreakDays": 1.5,
+        "confidence": 0.935,
+        "reason": "Condition satisfied. This tape is now unlocked.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      }
+    ],
+    "user_autoeval_1788711584095:tape_1788711584095_28a7138c": [
+      {
+        "evaluationId": "eval_1715000000000_b5558565",
+        "tapeId": "tape_1788711584095_28a7138c",
+        "evaluatedAt": 1715000000000,
+        "satisfied": false,
+        "observationsExamined": 1,
+        "currentStreakDays": 0,
+        "confidence": 0.9,
+        "reason": "Your tape is still sealed. Progress: 1 of 2 required observations and 0 of 1 qualifying days.",
+        "evaluatorVersion": "1.0.0-deterministic"
+      },
+      {
+        "evaluationId": "eval_1715103680000_03188d1f",
+        "tapeId": "tape_1788711584095_28a7138c",
         "evaluatedAt": 1715103680000,
         "satisfied": true,
         "observationsExamined": 2,

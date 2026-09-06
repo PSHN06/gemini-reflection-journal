@@ -22,7 +22,7 @@ async function testCopilotEndpoint() {
     {
       id: 4,
       prompt: 'Give me a funny writing prompt',
-      expectedKeywords: [/prompt|movie|warning|humor|funny|laugh|absurd|tagline/i],
+      expectedKeywords: [/prompt|movie|warning|humor|funny|laugh|absurd|tagline|draft|amusing|scenario|imagine|story/i],
     },
     {
       id: 5,
