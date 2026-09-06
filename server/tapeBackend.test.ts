@@ -6,6 +6,7 @@ import {
   getTapeById,
   evaluateTape,
   recordTelemetryToLedger,
+  autoEvaluateUserSealedTapes,
   validateCondition,
   sanitizeTapeForClient,
 } from './tapeService';
@@ -122,6 +123,30 @@ async function runTemporalTapeBackendTests() {
       headers: { Authorization: 'Bearer forged.invalid.token' },
     });
     assert.strictEqual(res.statusCode, 401);
+  });
+
+  await test('Auth Test 7: POST /api/gemini/reflect without token returns 401', async () => {
+    const res = await makeHttpRequest({
+      hostname: '127.0.0.1',
+      port: 3000,
+      path: '/api/gemini/reflect',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    }, JSON.stringify({ prompt: 'Hello world' }));
+    assert.strictEqual(res.statusCode, 401);
+    assert.strictEqual(res.data.code, 'UNAUTHORIZED');
+  });
+
+  await test('Auth Test 8: POST /api/gemini/telemetry without token returns 401', async () => {
+    const res = await makeHttpRequest({
+      hostname: '127.0.0.1',
+      port: 3000,
+      path: '/api/gemini/telemetry',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    }, JSON.stringify({ content: 'Feeling calm today' }));
+    assert.strictEqual(res.statusCode, 401);
+    assert.strictEqual(res.data.code, 'UNAUTHORIZED');
   });
 
   // ==================== 2. INPUT VALIDATION & SECURITY ====================
@@ -313,7 +338,7 @@ async function runTemporalTapeBackendTests() {
   const dayMs = 86400000;
   const baseTime = 1710000000000;
 
-  await test('Evaluation Invariant 1: Insufficient observations leaves tape SEALED', async () => {
+  await test('Evaluation Invariant 1: Insufficient observations leaves tape SEALED with calm informational progress', async () => {
     // Record only 1 observation when 3 are required
     await recordTelemetryToLedger(testUserA, {
       entryId: 'entry_1',
@@ -326,11 +351,13 @@ async function runTemporalTapeBackendTests() {
     const evalResult = await evaluateTape(testUserA, createdTapeId, baseTime);
     assert.strictEqual(evalResult.eligible, false);
     assert.strictEqual(evalResult.status, 'sealed');
-    assert.match(evalResult.reason, /Observation count|below required minimum/i);
+    assert.strictEqual(evalResult.outcome, 'sealed_count_incomplete');
+    assert.ok(evalResult.userMessage?.includes('still sealed'));
+    assert.ok(!evalResult.userMessage?.includes('violates'));
     assert.strictEqual(evalResult.tape.sealedProse, undefined);
   });
 
-  await test('Evaluation Invariant 2: Threshold violation leaves tape SEALED', async () => {
+  await test('Evaluation Invariant 2: Threshold condition not met returns calm informational progress, not error', async () => {
     // Record second observation with creativityIndex below threshold (e.g. 5 < 7)
     await recordTelemetryToLedger(testUserA, {
       entryId: 'entry_2',
@@ -343,7 +370,47 @@ async function runTemporalTapeBackendTests() {
     const evalResult = await evaluateTape(testUserA, createdTapeId, baseTime + dayMs);
     assert.strictEqual(evalResult.eligible, false);
     assert.strictEqual(evalResult.status, 'sealed');
+    assert.strictEqual(evalResult.outcome, 'sealed_threshold_not_met');
+    assert.ok(evalResult.userMessage?.includes('Your tape is still sealed'));
+    assert.ok(evalResult.userMessage?.includes('creativity score is 5/10'));
+    assert.ok(evalResult.userMessage?.includes('at least 7/10'));
+    assert.ok(!evalResult.userMessage?.includes('violates gte'), 'Must not expose raw violates gte message');
+    assert.ok(!evalResult.userMessage?.includes('Threshold condition violated'), 'Must not expose technical violation phrase');
     assert.strictEqual(evalResult.tape.sealedProse, undefined);
+  });
+
+  await test('Evaluation UX Case (Screenshot Fix): Focus score 5 with target >= 7 yields calm message without raw violation syntax', async () => {
+    const focusUser = `user_focus_check_${Date.now()}`;
+    const focusTape = await sealTape(focusUser, {
+      title: 'Focus Mastery Tape',
+      sealedProse: 'High focus attained',
+      condition: {
+        metric: 'focusIndex',
+        operator: 'gte',
+        threshold: 7,
+        sustainedDays: 5,
+        minObservations: 4,
+      },
+    });
+
+    await recordTelemetryToLedger(focusUser, {
+      entryId: 'entry_focus_5',
+      focusIndex: 5, // Violates gte 7
+      stressIndex: 3,
+      creativityIndex: 6,
+      confidenceScore: 0.9,
+    });
+
+    const evalResult = await evaluateTape(focusUser, focusTape.tapeId);
+    assert.strictEqual(evalResult.eligible, false);
+    assert.strictEqual(evalResult.status, 'sealed');
+    assert.strictEqual(evalResult.outcome, 'sealed_threshold_not_met');
+    assert.strictEqual(
+      evalResult.userMessage,
+      'Your tape is still sealed. Your current focus score is 5/10, while this tape requires at least 7/10. Progress: 0 of 5 qualifying days and 0 of 4 required observations.'
+    );
+    assert.ok(!evalResult.userMessage.includes('violates gte 7'));
+    assert.ok(!evalResult.userMessage.includes('Threshold condition violated'));
   });
 
   await test('Evaluation Invariant 3: Qualifying observations over required duration triggers TRANSACTIONAL UNLOCK', async () => {
@@ -435,6 +502,168 @@ async function runTemporalTapeBackendTests() {
     assert.strictEqual(secondEval.status, 'unlocked');
     assert.strictEqual(secondEval.alreadyUnlocked, true);
     assert.strictEqual(secondEval.tape.unlockedAt, initialUnlockedAt, 'unlockedAt must be immutable');
+  });
+
+  // ==================== 6. MANUAL END-TO-END VERTICAL SLICE ====================
+
+  await test('Vertical Slice: Journal Entry -> Telemetry Ledger -> Tape Sealed -> Evaluated (Sealed) -> Qualifying Entry -> Evaluated (Unlocked) -> Prose Revealed', async () => {
+    const sliceUser = `user_slice_${Date.now()}`;
+    const strangerUser = `user_stranger_${Date.now()}`;
+    const startTime = 1715000000000;
+    const sliceDayMs = 86400000;
+
+    // 1. Journal Entry 1: Telemetry analysis recorded to ledger
+    const ledgerEntry1 = await recordTelemetryToLedger(sliceUser, {
+      entryId: 'entry_day1_mindful',
+      recordedAt: startTime,
+      stressIndex: 3, // Qualifying (<= 4)
+      focusIndex: 8,
+      creativityIndex: 7,
+      confidenceScore: 0.92,
+      dominantThemes: ['calm', 'clarity'],
+      modelUsed: 'gemini-3.6-flash',
+    });
+    assert.ok(ledgerEntry1.telemetryId.startsWith('ledger_'));
+    assert.strictEqual(ledgerEntry1.ownerUid, sliceUser);
+    assert.strictEqual(ledgerEntry1.stressIndex, 3);
+
+    // 2. User creates & seals a Temporal Tape with deterministic unlock policy
+    const tape = await sealTape(sliceUser, {
+      title: 'Letter to my calm future self',
+      sealedProse: 'You have found steady calm and sustained resilience. Never forget how you reached this point.',
+      recipientNote: 'Unlocks when stress <= 4 across at least 1 sustained day with 2 entries.',
+      condition: {
+        metric: 'stressIndex',
+        operator: 'lte',
+        threshold: 4,
+        sustainedDays: 1,
+        minObservations: 2,
+        minConfidence: 0.8,
+      },
+    });
+
+    assert.ok(tape.tapeId.startsWith('tape_'));
+    assert.strictEqual(tape.status, 'sealed');
+    assert.strictEqual(tape.sealedProse, undefined, 'Zero-leakage invariant: sealed prose must NOT be in client response');
+
+    // 3. Evaluate tape immediately: only 1 observation exists -> Tape remains SEALED
+    const eval1 = await evaluateTape(sliceUser, tape.tapeId, startTime + 3600000);
+    assert.strictEqual(eval1.eligible, false);
+    assert.strictEqual(eval1.status, 'sealed');
+    assert.strictEqual(eval1.tape.sealedProse, undefined, 'Sealed prose remains concealed');
+    assert.strictEqual(eval1.outcome, 'sealed_count_incomplete');
+    assert.ok(eval1.userMessage?.includes('still sealed'));
+
+    // 4. Journal Entry 2: Second qualifying reflection recorded 1.5 days later
+    const day2Time = startTime + Math.floor(1.5 * sliceDayMs);
+    const ledgerEntry2 = await recordTelemetryToLedger(sliceUser, {
+      entryId: 'entry_day2_peaceful',
+      recordedAt: day2Time,
+      stressIndex: 2, // Qualifying (<= 4)
+      focusIndex: 9,
+      creativityIndex: 8,
+      confidenceScore: 0.95,
+      dominantThemes: ['peace', 'focus'],
+      modelUsed: 'gemini-3.6-flash',
+    });
+    assert.ok(ledgerEntry2.telemetryId.startsWith('ledger_'));
+
+    // 5. Evaluate tape again: both observations qualify, duration 1.5 days >= 1 day -> TRANSACTIONAL UNLOCK
+    const eval2 = await evaluateTape(sliceUser, tape.tapeId, day2Time);
+    assert.strictEqual(eval2.eligible, true, 'Condition criteria must now be satisfied');
+    assert.strictEqual(eval2.status, 'unlocked', 'Tape status must transition to unlocked');
+    assert.strictEqual(
+      eval2.tape.sealedProse,
+      'You have found steady calm and sustained resilience. Never forget how you reached this point.',
+      'Sealed prose must be safely revealed upon transactional unlock'
+    );
+    assert.ok(eval2.tape.unlockedAt !== null);
+    assert.strictEqual(eval2.tape.unlockEvidence?.satisfied, true);
+
+    // 6. Security verification: stranger cannot access the unlocked tape
+    const strangerAttempt = await getTapeById(strangerUser, tape.tapeId);
+    assert.strictEqual(strangerAttempt, null, 'Stranger must NOT be able to view User tape even after unlocking');
+
+    // 7. Re-fetch by owner confirms persistent unlocked state
+    const ownerFetch = await getTapeById(sliceUser, tape.tapeId);
+    assert.ok(ownerFetch !== null);
+    assert.strictEqual(ownerFetch?.status, 'unlocked');
+    assert.strictEqual(ownerFetch?.sealedProse, eval2.tape.sealedProse);
+  });
+
+  await test('Auto-evaluation: After telemetry is recorded, sealed tapes with satisfied conditions are automatically evaluated and unlocked without requiring a manual evaluate call', async () => {
+    const autoUser = 'user_autoeval_' + Date.now();
+    const startTime = 1715000000000;
+    const dayMs = 86400000;
+
+    // 1. Seal a tape requiring focusIndex >= 7 for 1 sustained day with 2 min observations
+    const tape = await sealTape(autoUser, {
+      title: 'Automatic evaluation test tape',
+      sealedProse: 'This secret should unlock automatically once telemetry criteria are met.',
+      condition: {
+        metric: 'focusIndex',
+        operator: 'gte',
+        threshold: 7,
+        sustainedDays: 1,
+        minObservations: 2,
+        minConfidence: 0.75,
+      },
+    });
+    assert.strictEqual(tape.status, 'sealed');
+    assert.strictEqual(tape.sealedProse, undefined);
+
+    // 2. Record first observation at t0
+    await recordTelemetryToLedger(autoUser, {
+      entryId: 'entry_auto_1',
+      recordedAt: startTime,
+      stressIndex: 3,
+      focusIndex: 8, // qualifying >= 7
+      creativityIndex: 6,
+      confidenceScore: 0.90,
+      dominantThemes: ['focus'],
+      modelUsed: 'gemini-3.6-flash',
+    });
+
+    // Auto-evaluate immediately: only 1 observation -> tape remains sealed
+    const res1 = await autoEvaluateUserSealedTapes(autoUser, startTime);
+    assert.strictEqual(res1.unlocked, 0);
+
+    const tapeAfterFirst = await getTapeById(autoUser, tape.tapeId);
+    assert.strictEqual(tapeAfterFirst?.status, 'sealed');
+    assert.strictEqual(tapeAfterFirst?.sealedProse, undefined);
+
+    // 3. Record second qualifying observation 1.2 days later
+    const day2Time = startTime + Math.floor(1.2 * dayMs);
+    await recordTelemetryToLedger(autoUser, {
+      entryId: 'entry_auto_2',
+      recordedAt: day2Time,
+      stressIndex: 3,
+      focusIndex: 9, // qualifying >= 7
+      creativityIndex: 7,
+      confidenceScore: 0.92,
+      dominantThemes: ['deep work'],
+      modelUsed: 'gemini-3.6-flash',
+    });
+
+    // Auto-evaluate: condition now satisfied -> automatically unlocked without manual evaluate call!
+    const res2 = await autoEvaluateUserSealedTapes(autoUser, day2Time);
+    assert.strictEqual(res2.unlocked, 1, 'One tape should have transitioned to unlocked automatically');
+
+    // 4. Verify tape is now unlocked with prose revealed
+    const unlockedTape = await getTapeById(autoUser, tape.tapeId);
+    assert.strictEqual(unlockedTape?.status, 'unlocked');
+    assert.strictEqual(
+      unlockedTape?.sealedProse,
+      'This secret should unlock automatically once telemetry criteria are met.',
+      'Sealed prose must be revealed automatically'
+    );
+    assert.ok(unlockedTape?.unlockedAt !== null);
+    assert.strictEqual(unlockedTape?.unlockEvidence?.satisfied, true);
+
+    // 5. Verify idempotency: running auto-evaluation again on already unlocked tape does nothing
+    const res3 = await autoEvaluateUserSealedTapes(autoUser, day2Time + 3600000);
+    assert.strictEqual(res3.unlocked, 0, 'Already unlocked tape must not be unlocked again');
+    assert.strictEqual(res3.evaluated, 0, 'Already unlocked tapes are skipped');
   });
 
   console.log(`\nTEST RESULTS: ${passed} passed, ${failed} failed.\n`);

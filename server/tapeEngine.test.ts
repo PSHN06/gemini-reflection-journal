@@ -92,8 +92,12 @@ console.log('--- RUNNING DETERMINISTIC TAPE ENGINE TEST SUITE ---');
   });
 
   assert(
-    'Test 2: Single threshold violation rejects unlock',
-    result.eligible === false && result.rejectionCode === 'THRESHOLD_VIOLATION',
+    'Test 2: Single threshold violation rejects unlock with friendly explanation',
+    result.eligible === false &&
+    result.rejectionCode === 'THRESHOLD_VIOLATION' &&
+    result.userMessage !== undefined &&
+    !result.userMessage.includes('violates') &&
+    !result.reason.includes('violates lte'),
     result
   );
 }

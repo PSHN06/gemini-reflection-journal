@@ -10,11 +10,12 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "test": "tsx server/tapeEngine.test.ts && tsx server/tapeBackend.test.ts"
+    "test": "tsx server/copilotFeatures.test.ts && tsx server/journalTitle.test.ts && tsx server/journalLogic.test.ts && tsx server/tapeEngine.test.ts && tsx server/tapeBackend.test.ts && tsx src/services/emotionalLandscapeEngine.test.ts && tsx server/liveReflectionTest.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.1.14",
+    "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "^5.0.4",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
@@ -25,6 +26,7 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-markdown": "^10.1.0",
+    "three": "^0.185.1",
     "vite": "^6.2.3"
   },
   "devDependencies": {

@@ -1,0 +1,89 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "User profile and settings document",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique Firebase user identifier" },
+        "email": { "type": "string", "description": "User email address" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "photoURL": { "type": "string", "description": "Profile picture URL" }
+      },
+      "required": ["uid"]
+    },
+    "journalEntry": {
+      "title": "JournalEntry",
+      "description": "User journal reflection entry with multi-turn dialogue",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique entry identifier" },
+        "userId": { "type": "string", "description": "Owner user UID" },
+        "title": { "type": "string", "description": "Reflection title" },
+        "content": { "type": "string", "description": "Draft or initial reflection body" },
+        "mode": { "type": "string", "enum": ["reflection", "brainstorm", "summary", "socratic"], "description": "Selected AI companion mode" },
+        "tags": { "type": "array", "description": "Thematic tags" },
+        "mood": { "type": "string", "description": "Mood indicator" },
+        "messages": { "type": "array", "description": "Multi-turn reflection chat history" },
+        "summary": { "type": "string", "description": "Executive summary from AI" },
+        "lastGeminiModel": { "type": "string", "description": "Model used for reflection" },
+        "createdAt": { "type": "number", "description": "Creation timestamp in milliseconds" },
+        "updatedAt": { "type": "number", "description": "Last update timestamp in milliseconds" }
+      },
+      "required": ["id", "userId", "title", "createdAt", "updatedAt"]
+    },
+    "telemetryLedger": {
+      "title": "TelemetryLedger",
+      "description": "Authoritative immutable cognitive telemetry observations",
+      "type": "object",
+      "properties": {
+        "telemetryId": { "type": "string", "description": "Unique telemetry observation ID" },
+        "ownerUid": { "type": "string", "description": "Owner user UID" },
+        "entryId": { "type": "string", "description": "Optional associated entry ID" },
+        "stressIndex": { "type": "number", "description": "Calibrated stress index 1-10" },
+        "focusIndex": { "type": "number", "description": "Calibrated focus index 1-10" },
+        "creativityIndex": { "type": "number", "description": "Calibrated creativity index 1-10" },
+        "confidenceScore": { "type": "number", "description": "Confidence score 0.0-1.0" },
+        "dominantThemes": { "type": "array", "description": "Kebab-case theme tags" },
+        "recordedAt": { "type": "number", "description": "Server-recorded timestamp" }
+      },
+      "required": ["ownerUid", "stressIndex", "focusIndex", "creativityIndex", "recordedAt"]
+    },
+    "temporalTape": {
+      "title": "TemporalTape",
+      "description": "Sealed temporal tape with deterministic unlock conditions",
+      "type": "object",
+      "properties": {
+        "tapeId": { "type": "string", "description": "Unique tape identifier" },
+        "ownerUid": { "type": "string", "description": "Owner user UID" },
+        "title": { "type": "string", "description": "Tape title" },
+        "sealedProse": { "type": "string", "description": "Sealed message, protected until unlock" },
+        "recipientNote": { "type": "string", "description": "Public note visible while sealed" },
+        "status": { "type": "string", "enum": ["sealed", "evaluating", "unlocked"], "description": "Tape status" },
+        "condition": { "type": "object", "description": "Deterministic unlock condition" },
+        "sealedAt": { "type": "number", "description": "Sealing timestamp" },
+        "createdAt": { "type": "number", "description": "Creation timestamp" },
+        "updatedAt": { "type": "number", "description": "Last update timestamp" }
+      },
+      "required": ["tapeId", "ownerUid", "title", "status", "condition", "sealedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "User profile collection"
+    },
+    "/users/{userId}/entries/{entryId}": {
+      "schema": "journalEntry",
+      "description": "User reflection journal entries"
+    },
+    "/users/{userId}/telemetry_ledger/{telemetryId}": {
+      "schema": "telemetryLedger",
+      "description": "User cognitive telemetry observations"
+    },
+    "/users/{userId}/tapes/{tapeId}": {
+      "schema": "temporalTape",
+      "description": "User sealed and unlocked Temporal Tapes"
+    }
+  }
+}

@@ -7,6 +7,20 @@ export interface ChatMessage {
   timestamp: number;
 }
 
+export interface JournalAttachment {
+  id: string;
+  entryId: string;
+  userId: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: number;
+  status: 'processing' | 'extracted' | 'image' | 'failed';
+  extractedText?: string;
+  previewUrl?: string;
+  error?: string;
+}
+
 export interface JournalEntry {
   id: string;
   userId: string;
@@ -20,6 +34,9 @@ export interface JournalEntry {
   lastGeminiModel?: string;
   createdAt: number;
   updatedAt: number;
+  isCustomTitle?: boolean; // User manually chose or edited the title; never overwrite automatically
+  titleGeneratedAt?: number;
+  attachments?: JournalAttachment[];
 }
 
 export interface UserInteractionRecord {
@@ -74,12 +91,29 @@ export interface UnlockEvidence {
   averageMetricScore?: number;
 }
 
+export type EvaluationOutcome =
+  | 'unlocked'
+  | 'already_unlocked'
+  | 'sealed_threshold_not_met'
+  | 'sealed_duration_incomplete'
+  | 'sealed_count_incomplete'
+  | 'sealed_no_data';
+
 export interface EvaluationProgress {
   currentStreakDays: number;
   currentObservationCount: number;
   lastEvaluatedAt: number | null;
   satisfactionPercentage: number;
   lastReason?: string;
+  observationsRecorded?: number;
+  observationsRequired?: number;
+  daysElapsed?: number;
+  daysRequired?: number;
+  currentMetricAverage?: number | null;
+  currentScore?: number | null;
+  requiredScore?: number;
+  conditionThreshold?: number;
+  outcome?: EvaluationOutcome;
 }
 
 export interface TemporalTape {
@@ -132,11 +166,22 @@ export interface EvaluateTapeResponse {
   eligible: boolean;
   alreadyUnlocked?: boolean;
   status: TapeStatus;
+  outcome?: EvaluationOutcome;
   reason: string;
+  userMessage?: string;
   currentStreakDays: number;
   observationCount: number;
   confidence: number;
   evaluatedAt: number;
   tape: TemporalTape;
+  observationsRecorded?: number;
+  observationsRequired?: number;
+  daysElapsed?: number;
+  daysRequired?: number;
+  currentMetricAverage?: number | null;
+  currentScore?: number | null;
+  requiredScore?: number;
+  conditionThreshold?: number;
+  rejectionCode?: string;
 }
 

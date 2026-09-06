@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, X, Lock, Key, Database, Server, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, X, Lock, Key, Database, Server } from 'lucide-react';
 
 interface SecurityModalProps {
   isOpen: boolean;
@@ -15,54 +15,54 @@ export const SecurityModal: React.FC<SecurityModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+      <div className="bg-[#1c1c20] border border-[rgba(255,255,255,0.08)] rounded-[20px] max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-modal-enter text-[#f5f5f7]">
         {/* Modal Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-[rgba(255,255,255,0.06)] flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="p-1.5 rounded-[8px] bg-[#30d158]/10 text-[#30d158]">
+              <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-semibold text-slate-100 font-['Outfit']">
-                Security & Data Isolation Model
+              <h3 className="text-[16px] font-semibold text-[#f5f5f7] tracking-tight">
+                Security & Data Isolation
               </h3>
-              <p className="text-xs text-slate-400">
-                End-to-end multi-tenant isolation and credential protection
+              <p className="text-[12px] text-[#86868b]">
+                Multi-tenant Firestore rules and secret isolation
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 text-[#86868b] hover:text-[#f5f5f7] hover:bg-[#242428] rounded-[8px] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-6 text-xs text-slate-300">
+        <div className="p-6 overflow-y-auto space-y-5 text-xs text-[#86868b] flex-1">
           {/* Active User Isolation */}
-          <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
-            <div className="flex items-center space-x-2 text-emerald-400 font-semibold">
-              <Lock className="w-4 h-4" />
+          <div className="p-4 bg-[#121214] border border-[rgba(255,255,255,0.06)] rounded-[14px] space-y-2">
+            <div className="flex items-center space-x-2 text-[#30d158] font-medium text-[13px]">
+              <Lock className="w-3.5 h-3.5" />
               <span>Owner-Bound Collection Path</span>
             </div>
-            <p className="text-slate-400 leading-relaxed">
-              Your journal entries and conversations with Gemini are stored under your verified Firebase Auth UID:
+            <p className="text-[#86868b] leading-relaxed">
+              Your journal entries and conversations are isolated under your verified Firebase Auth UID:
             </p>
-            <div className="p-2.5 bg-slate-900 rounded-lg font-mono text-[11px] text-amber-300 overflow-x-auto">
+            <div className="p-2.5 bg-[#18181c] rounded-[8px] font-mono text-[11px] text-[#f5f5f7] overflow-x-auto">
               /users/{userId || '{YOUR_VERIFIED_UID}'}/entries/*
             </div>
           </div>
 
           {/* Firestore Security Rules Block */}
           <div className="space-y-2">
-            <div className="flex items-center space-x-2 text-slate-200 font-semibold">
-              <Database className="w-4 h-4 text-amber-400" />
+            <div className="flex items-center space-x-2 text-[#f5f5f7] font-medium text-[13px]">
+              <Database className="w-3.5 h-3.5 text-[#ff9f0a]" />
               <span>Active Firestore Security Rules (firestore.rules)</span>
             </div>
-            <pre className="p-3.5 bg-slate-950 border border-slate-800 rounded-xl font-mono text-[11px] text-slate-300 overflow-x-auto leading-relaxed">
+            <pre className="p-3.5 bg-[#121214] border border-[rgba(255,255,255,0.06)] rounded-[12px] font-mono text-[11px] text-[#d0d0d8] overflow-x-auto leading-relaxed">
 {`rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -83,46 +83,46 @@ service cloud.firestore {
 
           {/* Defense in Depth Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl">
-              <div className="flex items-center space-x-2 text-slate-200 font-medium mb-1">
-                <Server className="w-4 h-4 text-blue-400" />
-                <span>Backend Secret Proxy</span>
+            <div className="p-3.5 bg-[#121214] border border-[rgba(255,255,255,0.06)] rounded-[12px]">
+              <div className="flex items-center space-x-2 text-[#f5f5f7] font-medium mb-1">
+                <Server className="w-3.5 h-3.5 text-[#0a84ff]" />
+                <span>Server-Side Secret Proxy</span>
               </div>
-              <p className="text-[11px] text-slate-400">
-                The Gemini API Key is never passed to client browsers. Requests are securely proxied via server-side endpoints.
+              <p className="text-[11.5px] text-[#86868b] leading-relaxed">
+                The Gemini API Key is never sent to browsers. All requests are securely proxied via server endpoints.
               </p>
             </div>
 
-            <div className="p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl">
-              <div className="flex items-center space-x-2 text-slate-200 font-medium mb-1">
-                <Key className="w-4 h-4 text-purple-400" />
+            <div className="p-3.5 bg-[#121214] border border-[rgba(255,255,255,0.06)] rounded-[12px]">
+              <div className="flex items-center space-x-2 text-[#f5f5f7] font-medium mb-1">
+                <Key className="w-3.5 h-3.5 text-[#a78bfa]" />
                 <span>Federated Google Sign-In</span>
               </div>
-              <p className="text-[11px] text-slate-400">
-                Passwordless authentication delegates credential storage to Google Identity Services with automatic token lifecycle.
+              <p className="text-[11.5px] text-[#86868b] leading-relaxed">
+                Passwordless authentication delegates credential handling securely to Google Identity Services.
               </p>
             </div>
           </div>
 
-          {/* Environment & Secrets Info */}
-          <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2">
-            <div className="flex items-center space-x-2 text-amber-400 font-medium">
-              <Key className="w-4 h-4" />
-              <span>Environment Configuration (.env)</span>
+          {/* Temporal Tapes Zero-Leakage Guarantee */}
+          <div className="p-4 bg-[#121214] border border-[rgba(255,255,255,0.06)] rounded-[14px] space-y-1.5">
+            <div className="flex items-center space-x-2 text-[#ff9f0a] font-medium text-[13px]">
+              <Lock className="w-3.5 h-3.5" />
+              <span>Temporal Tapes Zero-Leakage Guarantee</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Secrets like <code className="text-amber-300 font-mono">GEMINI_API_KEY</code> are stored in the root <code className="text-amber-300 font-mono">.env</code> file on the server. The backend dynamically reloads environment changes so updates take effect immediately without rebuilding.
+            <p className="text-[11.5px] text-[#86868b] leading-relaxed">
+              While a Temporal Tape is in <code className="text-[#f5f5f7] font-mono">sealed</code> status, the backend server completely withholds <code className="text-[#f5f5f7] font-mono">sealedProse</code> from all client responses. Private text is revealed only once the deterministic evaluator verifies the unlock condition.
             </p>
           </div>
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/50 flex justify-end">
+        <div className="px-6 py-4 border-t border-[rgba(255,255,255,0.06)] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-xl text-xs transition-colors cursor-pointer"
+            className="h-8 px-4 bg-[#f5f5f7] hover:bg-[#e5e5ea] text-[#121214] text-[13px] font-medium rounded-[8px] transition-colors cursor-pointer btn-press shadow-xs"
           >
-            Close
+            Done
           </button>
         </div>
       </div>

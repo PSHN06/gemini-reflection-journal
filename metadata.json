@@ -1,6 +1,6 @@
 {
   "name": "Gemini Reflection Journal",
-  "description": "User-authenticated multi-turn reflection journal and deterministic Temporal Tapes with Cloud Firestore persistence.",
+  "description": "User-authenticated reflection journal, entry-specific 3D Emotional Landscape, and deterministic Temporal Tapes with Cloud Firestore persistence.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

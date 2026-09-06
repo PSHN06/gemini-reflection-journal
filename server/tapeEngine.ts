@@ -53,16 +53,33 @@ export type EvaluationRejectionCode =
 export interface TapeEvaluationResult {
   eligible: boolean;
   reason: string;
+  userMessage?: string;
   currentStreakDays: number;
   observationCount: number;
   confidence: number;
   evaluatedAt: number;
   rejectionCode?: EvaluationRejectionCode;
+  violatingValue?: number;
+  currentScore?: number;
+  targetThreshold?: number;
 }
 
 const VALID_METRICS: readonly SupportedMetric[] = ['stressIndex', 'focusIndex', 'creativityIndex'];
 const VALID_OPERATORS: readonly ComparisonOperator[] = ['lte', 'gte'];
 const MS_PER_DAY = 86_400_000; // 24 * 60 * 60 * 1000
+
+function getMetricLabel(metric: SupportedMetric): string {
+  switch (metric) {
+    case 'stressIndex': return 'stress';
+    case 'focusIndex': return 'focus';
+    case 'creativityIndex': return 'creativity';
+    default: return String(metric);
+  }
+}
+
+function getOperatorPhrase(operator: ComparisonOperator): string {
+  return operator === 'lte' ? 'at most' : 'at least';
+}
 
 /**
  * Deterministically evaluates whether a Temporal Tape's unlock policy
@@ -77,7 +94,7 @@ export function evaluateTapePolicy(input: TapeEvaluationInput): TapeEvaluationRe
   if (input.currentStatus === 'unlocked') {
     return {
       eligible: false,
-      reason: 'Tape is already unlocked. State transitions from unlocked are irreversible.',
+      reason: 'This tape is already unlocked and its message is available.',
       currentStreakDays: 0,
       observationCount: Array.isArray(input.observations) ? input.observations.length : 0,
       confidence: 1.0,
@@ -179,7 +196,8 @@ export function evaluateTapePolicy(input: TapeEvaluationInput): TapeEvaluationRe
   if (!Array.isArray(rawObservations) || rawObservations.length === 0) {
     return {
       eligible: false,
-      reason: 'No telemetry observations provided for evaluation.',
+      reason: 'Your tape is still sealed. No journal reflections have been recorded yet.',
+      userMessage: 'Your tape is still sealed. No journal reflections have been recorded yet.',
       currentStreakDays: 0,
       observationCount: 0,
       confidence: 0,
@@ -254,65 +272,93 @@ export function evaluateTapePolicy(input: TapeEvaluationInput): TapeEvaluationRe
     const satisfies = policy.operator === 'lte' ? value <= policy.threshold : value >= policy.threshold;
 
     if (!satisfies) {
+      const metricLabel = getMetricLabel(policy.metric);
+      const opPhrase = getOperatorPhrase(policy.operator);
+      let reason = `Your tape is still sealed. Your current ${metricLabel} score is ${value}/10, while this tape requires ${opPhrase} ${policy.threshold}/10.`;
+      if (policy.sustainedDays > 0 || policy.minObservations > 1) {
+        reason += ` Progress: 0 of ${policy.sustainedDays} qualifying days and 0 of ${policy.minObservations} required observations.`;
+      }
+
       return {
         eligible: false,
-        reason: `Threshold condition violated: observation at ${new Date(obs.timestamp).toISOString()} has ${policy.metric} = ${value}, which violates ${policy.operator} ${policy.threshold}.`,
+        reason,
+        userMessage: reason,
         currentStreakDays,
         observationCount,
         confidence: averageConfidence,
         evaluatedAt,
         rejectionCode: 'THRESHOLD_VIOLATION',
+        violatingValue: value,
+        currentScore: value,
+        targetThreshold: policy.threshold,
       };
     }
   }
 
   // 6. Minimum Observation Count Check
   if (observationCount < policy.minObservations) {
+    let reason = `Your tape is still sealed. Observation count (${observationCount}) is below required minimum (${policy.minObservations}).`;
+    if (policy.sustainedDays > 0) {
+      reason = `Your tape is still sealed. Progress: ${currentStreakDays} of ${policy.sustainedDays} qualifying days and ${observationCount} of ${policy.minObservations} required observations.`;
+    }
     return {
       eligible: false,
-      reason: `Observation count (${observationCount}) is below required minimum (${policy.minObservations}).`,
+      reason,
+      userMessage: reason,
       currentStreakDays,
       observationCount,
       confidence: averageConfidence,
       evaluatedAt,
       rejectionCode: 'INSUFFICIENT_COUNT',
+      targetThreshold: policy.threshold,
     };
   }
 
   // 7. Sustained Duration Window Check
   if (currentStreakDays < policy.sustainedDays) {
+    const reason = `Your tape is still sealed. Progress: ${currentStreakDays} of ${policy.sustainedDays} qualifying days and ${observationCount} of ${policy.minObservations} required observations.`;
     return {
       eligible: false,
-      reason: `Observation window duration (${currentStreakDays} days) is less than required sustained duration (${policy.sustainedDays} days).`,
+      reason,
+      userMessage: reason,
       currentStreakDays,
       observationCount,
       confidence: averageConfidence,
       evaluatedAt,
       rejectionCode: 'INSUFFICIENT_DURATION',
+      targetThreshold: policy.threshold,
     };
   }
 
   // 8. Confidence Check
   const requiredConfidence = policy.minConfidence ?? 0.0;
   if (averageConfidence < requiredConfidence) {
+    const reason = `Your tape is still sealed. Telemetry confidence is building (${averageConfidence})—continue journaling to reach required verification (${requiredConfidence}).`;
     return {
       eligible: false,
-      reason: `Average telemetry confidence (${averageConfidence}) is below required minimum (${requiredConfidence}).`,
+      reason,
+      userMessage: reason,
       currentStreakDays,
       observationCount,
       confidence: averageConfidence,
       evaluatedAt,
       rejectionCode: 'INSUFFICIENT_CONFIDENCE',
+      targetThreshold: policy.threshold,
     };
   }
 
   // 9. All deterministic conditions satisfied
+  const metricLabel = getMetricLabel(policy.metric);
+  const opPhrase = getOperatorPhrase(policy.operator);
+  const successReason = `All unlock conditions met: ${metricLabel} maintained ${opPhrase} ${policy.threshold}/10 over ${currentStreakDays} days across ${observationCount} observations.`;
   return {
     eligible: true,
-    reason: `All unlock conditions met: ${policy.metric} ${policy.operator} ${policy.threshold} maintained over ${currentStreakDays} days across ${observationCount} observations with confidence ${averageConfidence}.`,
+    reason: successReason,
+    userMessage: 'Condition satisfied. This tape is now unlocked.',
     currentStreakDays,
     observationCount,
     confidence: averageConfidence,
     evaluatedAt,
+    targetThreshold: policy.threshold,
   };
 }

@@ -49,6 +49,9 @@ export function subscribeToUserEntries(
           lastGeminiModel: data.lastGeminiModel || '',
           createdAt: data.createdAt || Date.now(),
           updatedAt: data.updatedAt || Date.now(),
+          isCustomTitle: Boolean(data.isCustomTitle),
+          titleGeneratedAt: data.titleGeneratedAt || undefined,
+          attachments: Array.isArray(data.attachments) ? data.attachments : [],
         });
       });
       onUpdate(entries);

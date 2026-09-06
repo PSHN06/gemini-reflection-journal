@@ -8,6 +8,7 @@ import {
   TapeUnlockCondition,
   UnlockEvidence,
   EvaluationProgress,
+  EvaluationOutcome,
   TelemetryLedgerEntry,
   TapeEvaluationLog,
 } from '../src/types';
@@ -165,12 +166,19 @@ export async function checkLiveFirestore(): Promise<boolean> {
     const db = getAdminDb();
     await db.collection('_healthcheck').limit(1).get();
     isLiveFirestoreAvailable = true;
-    console.log('[Persistence Mode] Live Cloud Firestore is ACTIVE and verified.');
+    console.log('[Persistence] Using Cloud Firestore (Application Default Credentials)');
   } catch (err: any) {
     isLiveFirestoreAvailable = false;
-    console.log('[Persistence Mode] Firestore is UNAVAILABLE in this environment. Disk-backed local fallback is ACTIVE (.data/temporal_store.json). Note:', err?.message || 'Credentials not present');
+    console.log('[Persistence] Firestore unavailable. Using local disk fallback at .data/temporal_store.json');
+    if (err?.message) {
+      console.log(`[Persistence] Reason: ${err.message}`);
+    }
   }
   return isLiveFirestoreAvailable;
+}
+
+export function getPersistenceMode(): 'firestore' | 'local-disk' {
+  return isLiveFirestoreAvailable ? 'firestore' : 'local-disk';
 }
 
 export async function initPersistenceMode(): Promise<'firestore' | 'local_disk'> {
@@ -586,12 +594,23 @@ export interface EvaluateTapeResponse {
   eligible: boolean;
   alreadyUnlocked?: boolean;
   status: 'sealed' | 'evaluating' | 'unlocked';
+  outcome?: EvaluationOutcome;
   reason: string;
+  userMessage?: string;
   currentStreakDays: number;
   observationCount: number;
   confidence: number;
   evaluatedAt: number;
   tape: TemporalTape;
+  observationsRecorded?: number;
+  observationsRequired?: number;
+  daysElapsed?: number;
+  daysRequired?: number;
+  currentMetricAverage?: number | null;
+  currentScore?: number | null;
+  requiredScore?: number;
+  conditionThreshold?: number;
+  rejectionCode?: string;
 }
 
 /**
@@ -620,18 +639,65 @@ export async function evaluateTape(
       eligible: false,
       alreadyUnlocked: true,
       status: 'unlocked',
-      reason: 'Tape is already unlocked. State transitions from unlocked are irreversible.',
+      outcome: 'already_unlocked',
+      reason: 'This tape is already unlocked and its message is available.',
+      userMessage: 'This tape is already unlocked and its message is available.',
       currentStreakDays: tape.evaluationProgress?.currentStreakDays ?? 0,
       observationCount: tape.evaluationProgress?.currentObservationCount ?? 0,
       confidence: tape.unlockEvidence?.confidence ?? 1.0,
       evaluatedAt,
       tape: sanitizeTapeForClient(tape),
+      observationsRecorded: tape.evaluationProgress?.observationsRecorded ?? tape.evaluationProgress?.currentObservationCount ?? 0,
+      observationsRequired: tape.evaluationProgress?.observationsRequired ?? tape.condition.minObservations,
+      daysElapsed: tape.evaluationProgress?.daysElapsed ?? tape.evaluationProgress?.currentStreakDays ?? 0,
+      daysRequired: tape.evaluationProgress?.daysRequired ?? tape.condition.sustainedDays,
+      currentMetricAverage: tape.evaluationProgress?.currentMetricAverage ?? null,
+      currentScore: tape.evaluationProgress?.currentScore ?? null,
+      requiredScore: tape.condition.threshold,
+      conditionThreshold: tape.condition.threshold,
     };
   }
 
   // Load validated telemetry observations
   const rawObservations = await dbListTelemetry(uid);
   rawObservations.sort((a, b) => a.timestamp - b.timestamp);
+
+  // Compute qualifying observations from telemetry ledger deterministically
+  const metric = tape.condition.metric;
+  const operator = tape.condition.operator;
+  const threshold = tape.condition.threshold;
+  const sustainedDays = tape.condition.sustainedDays;
+  const minObservations = tape.condition.minObservations;
+
+  const qualifyingObs = rawObservations.filter((obs) => {
+    const val = obs[metric];
+    if (typeof val !== 'number' || Number.isNaN(val)) return false;
+    return operator === 'lte' ? val <= threshold : val >= threshold;
+  });
+
+  const observationsRecorded = qualifyingObs.length;
+  const observationsRequired = minObservations;
+
+  let daysElapsed = 0;
+  if (qualifyingObs.length >= 2) {
+    const first = qualifyingObs[0].timestamp;
+    const last = qualifyingObs[qualifyingObs.length - 1].timestamp;
+    daysElapsed = Number((Math.max(0, last - first) / 86400000).toFixed(2));
+  }
+
+  let currentMetricAverage: number | null = null;
+  if (qualifyingObs.length > 0) {
+    const sum = qualifyingObs.reduce((acc, obs) => acc + (obs[metric] || 0), 0);
+    currentMetricAverage = Number((sum / qualifyingObs.length).toFixed(1));
+  } else if (rawObservations.length > 0) {
+    const latestObs = rawObservations[rawObservations.length - 1];
+    if (typeof latestObs[metric] === 'number') {
+      currentMetricAverage = Number(latestObs[metric].toFixed(1));
+    }
+  }
+
+  const latestObs = rawObservations.length > 0 ? rawObservations[rawObservations.length - 1] : null;
+  const currentScore = latestObs && typeof latestObs[metric] === 'number' ? latestObs[metric] : currentMetricAverage;
 
   // Pass observations + policy to pure deterministic tapeEngine
   const engineResult = evaluateTapePolicy({
@@ -646,13 +712,16 @@ export async function evaluateTape(
 
   // If ELIGIBLE: Execute Transactional Unlock
   if (engineResult.eligible) {
+    const outcome: EvaluationOutcome = 'unlocked';
+    const userMessage = 'Condition satisfied. This tape is now unlocked.';
+
     const evidence: UnlockEvidence = {
       unlockedAt: evaluatedAt,
       evaluatedAt,
       currentStreakDays: engineResult.currentStreakDays,
       observationCount: engineResult.observationCount,
       confidence: engineResult.confidence,
-      reason: engineResult.reason,
+      reason: userMessage,
       threshold: tape.condition.threshold,
       metric: tape.condition.metric,
       operator: tape.condition.operator,
@@ -664,7 +733,16 @@ export async function evaluateTape(
       currentObservationCount: engineResult.observationCount,
       lastEvaluatedAt: evaluatedAt,
       satisfactionPercentage: 100,
-      lastReason: engineResult.reason,
+      lastReason: userMessage,
+      observationsRecorded,
+      observationsRequired,
+      daysElapsed: engineResult.currentStreakDays,
+      daysRequired: sustainedDays,
+      currentMetricAverage,
+      currentScore,
+      requiredScore: threshold,
+      conditionThreshold: threshold,
+      outcome,
     };
 
     const logEntry: TapeEvaluationLog = {
@@ -675,7 +753,7 @@ export async function evaluateTape(
       observationsExamined: engineResult.observationCount,
       currentStreakDays: engineResult.currentStreakDays,
       confidence: engineResult.confidence,
-      reason: engineResult.reason,
+      reason: userMessage,
       evaluatorVersion: '1.0.0-deterministic',
     };
 
@@ -685,17 +763,57 @@ export async function evaluateTape(
       success: true,
       eligible: true,
       status: 'unlocked',
-      reason: engineResult.reason,
+      outcome,
+      reason: userMessage,
+      userMessage,
       currentStreakDays: engineResult.currentStreakDays,
       observationCount: engineResult.observationCount,
       confidence: engineResult.confidence,
       evaluatedAt,
       // Status is 'unlocked', so sealedProse is safely revealed!
       tape: sanitizeTapeForClient(result.tape),
+      observationsRecorded,
+      observationsRequired,
+      daysElapsed: engineResult.currentStreakDays,
+      daysRequired: sustainedDays,
+      currentMetricAverage,
+      currentScore,
+      requiredScore: threshold,
+      conditionThreshold: threshold,
     };
   }
 
   // If NOT ELIGIBLE: Update evaluation progress without unlocking
+  let outcome: EvaluationOutcome = 'sealed_threshold_not_met';
+  if (rawObservations.length === 0 || engineResult.rejectionCode === 'NO_OBSERVATIONS') {
+    outcome = 'sealed_no_data';
+  } else if (engineResult.rejectionCode === 'THRESHOLD_VIOLATION') {
+    outcome = 'sealed_threshold_not_met';
+  } else if (engineResult.rejectionCode === 'INSUFFICIENT_DURATION') {
+    outcome = 'sealed_duration_incomplete';
+  } else if (engineResult.rejectionCode === 'INSUFFICIENT_COUNT') {
+    outcome = 'sealed_count_incomplete';
+  }
+
+  const metricLabel = metric === 'focusIndex' ? 'focus' : metric === 'stressIndex' ? 'stress' : 'creativity';
+  const opPhrase = operator === 'lte' ? 'at most' : 'at least';
+
+  let userMessage = '';
+  if (outcome === 'sealed_no_data') {
+    userMessage = 'Your tape is still sealed. No journal reflections have been recorded yet to evaluate this tape.';
+  } else if (outcome === 'sealed_threshold_not_met') {
+    userMessage = `Your tape is still sealed. Your current ${metricLabel} score is ${currentScore ?? '—'}/10, while this tape requires ${opPhrase} ${threshold}/10.`;
+    if (sustainedDays > 0 || minObservations > 1) {
+      userMessage += ` Progress: ${daysElapsed} of ${sustainedDays} qualifying days and ${observationsRecorded} of ${minObservations} required observations.`;
+    }
+  } else if (outcome === 'sealed_duration_incomplete') {
+    userMessage = `Your tape is still sealed. Progress: ${daysElapsed} of ${sustainedDays} qualifying days and ${observationsRecorded} of ${minObservations} required observations.`;
+  } else if (outcome === 'sealed_count_incomplete') {
+    userMessage = `Your tape is still sealed. Progress: ${observationsRecorded} of ${minObservations} required observations and ${daysElapsed} of ${sustainedDays} qualifying days.`;
+  } else {
+    userMessage = engineResult.reason;
+  }
+
   const streakPct = tape.condition.sustainedDays > 0
     ? Math.min(100, (engineResult.currentStreakDays / tape.condition.sustainedDays) * 100)
     : 100;
@@ -707,7 +825,16 @@ export async function evaluateTape(
     currentObservationCount: engineResult.observationCount,
     lastEvaluatedAt: evaluatedAt,
     satisfactionPercentage: overallPct,
-    lastReason: engineResult.reason,
+    lastReason: userMessage,
+    observationsRecorded,
+    observationsRequired,
+    daysElapsed,
+    daysRequired: sustainedDays,
+    currentMetricAverage,
+    currentScore,
+    requiredScore: threshold,
+    conditionThreshold: threshold,
+    outcome,
   };
 
   const logEntry: TapeEvaluationLog = {
@@ -718,7 +845,7 @@ export async function evaluateTape(
     observationsExamined: engineResult.observationCount,
     currentStreakDays: engineResult.currentStreakDays,
     confidence: engineResult.confidence,
-    reason: engineResult.reason,
+    reason: userMessage,
     evaluatorVersion: '1.0.0-deterministic',
   };
 
@@ -728,15 +855,65 @@ export async function evaluateTape(
     success: true,
     eligible: false,
     status: 'sealed',
-    reason: engineResult.reason,
+    outcome,
+    reason: userMessage,
+    userMessage,
+    rejectionCode: engineResult.rejectionCode,
     currentStreakDays: engineResult.currentStreakDays,
     observationCount: engineResult.observationCount,
     confidence: engineResult.confidence,
     evaluatedAt,
     // Status is 'sealed', so sealedProse remains stripped
     tape: sanitizeTapeForClient(updatedTape),
+    observationsRecorded,
+    observationsRequired,
+    daysElapsed,
+    daysRequired: sustainedDays,
+    currentMetricAverage,
+    currentScore,
+    requiredScore: threshold,
+    conditionThreshold: threshold,
   };
 }
 
 // Alias export for recordTelemetry
 export const recordTelemetry = recordTelemetryToLedger;
+
+/**
+ * Automatically evaluates all sealed tapes belonging to a user.
+ * Skips tapes that are already unlocked.
+ * Catches per-tape errors so one failure does not halt other evaluations.
+ */
+export async function autoEvaluateUserSealedTapes(
+  uid: string,
+  injectedNow?: number
+): Promise<{ evaluated: number; unlocked: number }> {
+  let evaluated = 0;
+  let unlocked = 0;
+
+  try {
+    const tapes = await getTapesForUser(uid);
+    const sealedTapes = tapes.filter((t) => t.status === 'sealed');
+
+    if (sealedTapes.length === 0) {
+      return { evaluated: 0, unlocked: 0 };
+    }
+
+    for (const tape of sealedTapes) {
+      try {
+        evaluated++;
+        const evalResult = await evaluateTape(uid, tape.tapeId, injectedNow);
+        if (evalResult.eligible && evalResult.status === 'unlocked') {
+          unlocked++;
+          console.log(`[AutoEval] Tape ${tape.tapeId} unlocked for user ${uid}`);
+        }
+      } catch (err: any) {
+        console.error(`[AutoEval] Error evaluating tape ${tape.tapeId} for user ${uid}:`, err?.message || err);
+      }
+    }
+  } catch (err: any) {
+    console.error(`[AutoEval] Unexpected error for user ${uid}:`, err?.message || err);
+  }
+
+  return { evaluated, unlocked };
+}

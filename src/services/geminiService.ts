@@ -1,5 +1,6 @@
 import { ChatMessage, ReflectionMode, TelemetryMetrics } from '../types';
 import { auth } from '../firebase';
+import { generateDeterministicFallbackTitle } from '../utils/journalFormatters';
 
 export class GeminiApiError extends Error {
   errorCode: string;
@@ -55,7 +56,8 @@ export async function generateReflectionResponse(
   prompt: string,
   conversationHistory: ChatMessage[],
   mode: ReflectionMode = 'reflection',
-  userContext?: string
+  userContext?: string,
+  entryId?: string
 ): Promise<GenerateReflectionResponse> {
   const headers = await getAuthHeaders();
   const response = await fetch('/api/gemini/reflect', {
@@ -69,6 +71,7 @@ export async function generateReflectionResponse(
       })),
       mode,
       userContext,
+      entryId,
     }),
   });
 
@@ -137,4 +140,55 @@ export async function extractTelemetry(content: string): Promise<TelemetryMetric
   }
 
   return data.telemetry;
+}
+
+/**
+ * Generates an automatic, high-quality human-curated title for a journal entry.
+ * Uses Gemini API with fallback to local deterministic cognitive title engine.
+ * Never throws disruptive errors to the caller.
+ */
+export async function generateEntryTitle(
+  content: string,
+  entryId?: string
+): Promise<{ title: string; isFallback: boolean; modelUsed: string; entryId?: string }> {
+  if (!content || !content.trim()) {
+    return {
+      title: 'Moments of Reflection',
+      isFallback: true,
+      modelUsed: 'Local Fallback',
+      entryId,
+    };
+  }
+
+  try {
+    const headers = await getAuthHeaders();
+    const response = await fetch('/api/gemini/title', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ content, entryId }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.title) {
+        return {
+          title: data.title,
+          isFallback: Boolean(data.isFallback),
+          modelUsed: data.modelUsed || 'Gemini',
+          entryId: data.entryId || entryId,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('[Gemini Service] Title API call failed or offline, using deterministic fallback engine:', err);
+  }
+
+  // Graceful client fallback using deterministic semantic analyzer
+  const fallback = generateDeterministicFallbackTitle(content);
+  return {
+    title: fallback,
+    isFallback: true,
+    modelUsed: 'Cognitive Title Engine (Offline Fallback)',
+    entryId,
+  };
 }

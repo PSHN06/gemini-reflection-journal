@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
   User 
 } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
 // Initialize Firebase App instance safely
@@ -19,6 +19,18 @@ export const auth = getAuth(app);
 // Use provisioned database ID or default
 const databaseId = (firebaseConfig as any).firestoreDatabaseId || '(default)';
 export const db = getFirestore(app, databaseId);
+
+// Test connection on boot
+async function testConnection() {
+  try {
+    await getDocFromServer(doc(db, 'test', 'connection'));
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.warn('Firebase connection check: client appears offline.');
+    }
+  }
+}
+testConnection();
 
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({
@@ -33,9 +45,10 @@ export async function loginWithGoogle(): Promise<User> {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
   } catch (error: any) {
-    console.warn('Popup sign in failed or blocked, attempting redirect fallback:', error);
-    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
-      await signInWithRedirect(auth, googleProvider);
+    console.warn('Google popup sign-in failed:', error);
+    if (error.code === 'auth/unauthorized-domain') {
+      const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'current domain';
+      throw new Error(`Domain unauthorized: Add '${currentHost}' to Firebase Console → Authentication → Settings → Authorized domains.`);
     }
     throw error;
   }

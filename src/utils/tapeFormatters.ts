@@ -42,6 +42,10 @@ export function formatUnlockEvidenceExplanation(evidence?: UnlockEvidence | null
     return 'Unlocked when journal-derived signals satisfied your condition.';
   }
   
+  if (evidence.reason) {
+    return evidence.reason;
+  }
+
   const days = evidence.currentStreakDays;
   const count = evidence.observationCount;
   return `Unlocked after ${days} ${days === 1 ? 'day' : 'days'} of qualifying observations across ${count} journal ${count === 1 ? 'entry' : 'entries'}.`;
