@@ -1,0 +1,5 @@
+Gemini Reflection Journal is an AI-powered personal sanctuary that transforms introspection into an insightful dialogue with your future self. Powered by Google Gemini, the platform delivers grounded, non-clinical reflections, content-aware auto-titling, and an interactive 3D Emotional Landscape that maps emotions, thoughts, and themes across daily, weekly, and monthly horizons.
+
+The core breakthrough is Temporal Tapes: future-self reflections sealed behind objective psychological conditions rather than arbitrary dates. Under the strict principle "Models Propose, Deterministic Code Decides," Gemini extracts cognitive telemetry while a zero-dependency mathematical engine verifies unlock criteria.
+
+Built with React, TypeScript, and Express, all data is secured via Firebase Authentication and isolated within Cloud Firestore. Intended for containerized deployment on Google Cloud Run, it sets a new standard for private, verifiable personal growth.
